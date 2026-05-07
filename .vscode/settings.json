@@ -1,0 +1,7 @@
+{
+    "cmake.configureArgs": [
+        "-DCMAKE_TOOLCHAIN_FILE=toolchain/arm-none-eabi-clang.cmake",
+        "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+        "-G Ninja"
+    ]
+}
