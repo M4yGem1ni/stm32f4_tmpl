@@ -1,0 +1,29 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "STM32F4 Debug (OpenOCD)",
+            "cwd": "${workspaceFolder}",
+            "executable": "${command:cmake.launchTargetPath}",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "device": "STM32F405RGT6",
+            "configFiles": [
+                "interface/stlink.cfg",
+                "target/stm32f4x.cfg"
+            ],
+            "preLaunchTask": "Build STM32 Firmware",
+            "preRestartCommands": [
+                "monitor reset halt",
+                "load",
+                "monitor reset halt"
+            ],
+            "postAttachCommands": [
+                "monitor reset halt"
+            ],
+            "runToEntryPoint": "main",
+            "svdFile": "${workspaceFolder}/.vscode/STM32F405.svd"
+        }
+    ]
+}

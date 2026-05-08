@@ -74,15 +74,50 @@ ${HAL_SRC_DIR}/stm32f4xx_hal_uart.c
 
 ## 调试
 
+### VS Code 调试（推荐）
+
+**安装插件**：项目 `.vscode/extensions.json` 已推荐 `Cortex-Debug` 和 `clangd`。
+
+**配置 CMake**（Debug 模式，包含调试符号）：
+
 ```bash
-# 终端 1
+cmake -B build \
+    -DCMAKE_TOOLCHAIN_FILE=toolchain/arm-none-eabi-clang.cmake \
+    -DCMAKE_BUILD_TYPE=Debug \
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+    -G Ninja
+```
+
+**工作流程**：
+
+1. 点击行号左侧添加断点（红点）
+2. 按 `F5` 启动调试
+   - Cortex-Debug 自动启动 OpenOCD 作为 GDB 服务器
+   - 编译固件（如代码有改动）
+   - Flash 烧录并停在 `main()` 入口
+3. `F10` 单步跳过 / `F11` 单步进入 / `F5` 继续运行
+4. 左侧 "CORTEX-DEBUG" 面板可查看外设寄存器值
+
+**SVD 外设寄存器视图**（可选）：
+
+```bash
+# 下载 SVD 文件到 .vscode/，调试时可以图形化查看 GPIO、RCC 等寄存器
+curl -o .vscode/STM32F405.svd https://raw.githubusercontent.com/posborne/cmsis-svd/master/data/STMicro/STM32F405.svd
+```
+
+### 终端调试
+
+```bash
+# 终端 1: 启动 OpenOCD
 openocd -f interface/stlink.cfg -f target/stm32f4x.cfg
 
-# 终端 2
+# 终端 2: GDB 连接
 arm-none-eabi-gdb build/stm32f4-blinky \
     -ex "target extended-remote :3333" \
     -ex "monitor reset halt" \
-    -ex "load"
+    -ex "load" \
+    -ex "break main" \
+    -ex "continue"
 ```
 
 ## extern "C" 使用规则
